@@ -60,7 +60,7 @@ plugins:
 author:
   name   : "Varun Gopal"
   avatar : "/assets/images/VG.jpg"
-  bio    : "Ph.D. Candidate in Chemical Engineering"
+  bio    : "Ph.D. Candidate in Chemical Engineering @ University of Minnesota - Twin Cities"
   links:
     - label: "LinkedIn"
       icon: "fab fa-linkedin"
@@ -68,8 +68,8 @@ author:
     - label: "GitHub"
       icon: "fab fa-github"
       url: "https://github.com/varun-go"
-    - label: "Twitter"
-      icon: "fab fa-twitter"
+    - label: "X"
+      icon: "fa-brands fa-x-twitter"
       url: "https://twitter.com/varun__gopal"
 
 footer:
@@ -80,8 +80,8 @@ footer:
     - label: "GitHub"
       icon: "fab fa-github"
       url: "https://github.com/varun-go"
-    - label: "Twitter"
-      icon: "fab fa-twitter"
+    - label: "X"
+      icon: "fa-brands fa-x-twitter"
       url: "https://twitter.com/varun__gopal"
 
 defaults:
