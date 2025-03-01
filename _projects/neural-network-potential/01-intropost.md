@@ -2,7 +2,7 @@
 layout: single
 title: "Neural-Network Potentials - Part 1" 
 permalink: /projects/neural-network-potential/part-1/
-# classes: wide
+classes: wide
 use_math: true
 toc: true
 toc_sticky: true
@@ -77,7 +77,51 @@ we could learn this mapping with machine learning techniques if we have sufficie
 
 # Neural-Network Potentials (NNPs)
 
- 
+## Main Idea
+
+As stated in the previous section, NNPs aim to approximate the potential energy surface using neural networks. The main idea is to learn the mapping between the atomic coordinates and the potential energy of the system. How can we do this? 
+
+The idea introduced by Behler and Parrinello in their seminal [paper](http://dx.doi.org/10.1103/PhysRevLett.98.146401) from 2007 is to decompose the potential energy of a configuration into atomic/site contributions:
+
+$$
+V(\mathbf{R}) = \sum_{i=1}^{N} E_i
+$$ 
+where $E_i$ is the energy contribution of atom/site $i$ in the system and $N$ is the number of atoms/sites in the system. 
+
+{: .notice--info}
+> **Note:** From now on, I will only refer to atomic contributions, but the same concepts can be applied to site contributions as well.
+
+A model is used to estimate the atomic energy. In the Behler-Parrinello NNP, the model is a feedforward neural network that takes as input a feature vector that describes the local atomic environment around a specific atom. We will refer to this feature vector as the atomic environment vector (AEV), such that $AEV_{i}$ is the feature vector for atom $i$ in the system. Thus, the atomic energy is predicted as:
+
+$$
+E_i = f_{\theta_i}(AEV_i)
+$$
+    
+where $f_{\theta_i}$ is the neural network with parameters $\theta$. We can initially think of a separate neural network for each atom in the system. This network will predict the atomic energy for the atom based on its local atomic environment. To ensure that the system is invariant to the permutation of atoms, the atomic energies are predicted using the same neural network. To understand this point, consider a single configuration of a single-component system. If two particle labels are permuted, the potential energy of the system should remain the same. To ensure this invariance, a single network is used to predict the atomic energies.
+
+<!--
+insert figure showing the neural network architecture
+-->
+
+The learning process involves training the neural network to minimize the difference between the sum of the predicted atomic energies and the *true* configuration energy. The *true* atomic energies can obtained from any source (e.g., *ab initio* calculations, semi-empirical methods, etc.). The key point is that the neural network is trained to predict the atomic energies that sum up to the configuration energy (i.e., the label value). The loss function can be constructed as sum of squared differences between the predicted atomic energies and the *true* configuration energy:
+
+$$
+\mathcal{L} = \sum_{l=1}^{L}[\sum_{i=1}^{N} (E_i)) - E_{true_l}]^2
+$$
+where $L$ is the number of training configurations and $E_{true_l}$ is the *true* configuration energy for the $l$-th configuration. 
+
+## Single-component vs Multi-component Systems
+
+For a single-component system, a singular neural network can be used to predict the atomic energies. However, for multi-component systems, the atomic energies are predicted using multiple neural networks. For example, consider a system such as water, where there are two types of atoms (hydrogen and oxygen). In this case, two neural networks are used to predict the atomic energies. The oxygen network is used to predict the atomic energy of oxygen atoms, and the hydrogen network is used to predict the atomic energy of hydrogen atoms. The predicted atomic energies are summed up to obtain the configuration energy.
+
+$$ 
+E_{\text{config}} = \sum_{i=1}^{N_{\text{O}}} E_{\text{O}_i} + \sum_{j=1}^{N_{\text{H}}} E_{\text{H}_i}
+$$
+where $N_{\text{O}}$ and $N_{\text{H}}$ are the number of oxygen and hydrogen atoms in the system, respectively.
+
+Now, let's dive into the details of the feature vectors used to describe the local atomic environments.
+
+
 <!-- 
 Notes:
 1. Add that we are looking at the flavor of NNPs which estimate that the potential energy of a system can be decomposed into atomic (or site) contributions.
@@ -90,8 +134,12 @@ Notes:
 Notes:
 1. Add information about other descriptors such as SOAP 
 2. 
-
 -->
+
+The atomic environment vector (AEV) is a feature vector that describes the local atomic environment around a specific atom. There are different methods for constructing these 
+
+
+
 
 ### Atom-centered symmetry functions (ACSFs)
 
@@ -127,6 +175,16 @@ where $r_{ij}$ is the pairwise distance between particle $i$ and particle $j$, a
 **Note:**
 Other cutoff functions can be used as well. For example, the [n2p2](https://compphysvienna.github.io/n2p2/) package which helps automate the training of neural network potentials using the BP symmetry functions has multiple [cutoff functions](https://compphysvienna.github.io/n2p2/api/cutoff_functions.html) to choose from.
 
+{% include figure 
+  image_path="/assets/images/nnp_post_1/cutoff_functions.svg" 
+  alt="A graph showing the two classes of cutoff functions mentioned in the text."
+  caption="Visualization of two classes of cutoff function for a cutoff distance of 12 Bohr (~6.3 Angstroms)."
+  width="25%" 
+  height="25%"
+  title="Tooltip text when hovering"
+  %}
+
+The figure shows that the functions monotically decrease to zero at the cutoff distance. Both functions are continuous and differentiable, which is important for training the neural network.
 
 In accordance to reference \[1\](), the first ACSF is a sum of the cutoff functions for the neighbors of the central atom \(i\):
 
@@ -144,12 +202,34 @@ $$
 
 where $ \eta $ and $ r_s $ are parameters that alter the width and position of the Gaussian, respectively. These parameters can be selected to focus on certain distances from the central atom; for example, one may interested in capturing the presence of atoms at the distance of the first coordination shell around the central atom. Generally, a range of values for $ \eta $ and $ r_s $ are used to capture the local atomic environment at different scales. Since the Gaussian terms are multiplied by the cutoff function, the contribution of atoms that are farther away from the central atom is reduced.
 
-**Angular Symmetry Function ($G_3$)**
+{% include figure 
+  image_path="/assets/images/nnp_post_1/radial_symmetry_functions_fig1.svg" 
+  alt=" "
+  caption="$G_2$ symmetry function values for different $\eta$ values when $R_s = 0$ considering only a single neighbor particle. The cutoff distance is 12 Bohr (~6.3 Angstroms)." 
+  width="25%" 
+  height="25%"
+  title="Tooltip text when hovering"
+  %}
+
+Smaller values of $ \eta $ result in a wider Gaussian term, allowing neighbors at larger pairwise distances to be captured. On the other hand, larger values of $ \eta $ result in a narrower Gaussian term, localizing the contribution of the neighbor particles to a smaller range. The cutoff function ensures that the contributions decay to zero if the pairwise distance is greater than the cutoff distance.
+
+ {% include figure 
+  image_path="/assets/images/nnp_post_1/radial_symmetry_functions_fig2.svg" 
+  alt=" "
+  caption="$G_2$ symmetry function values for different $R_s$ values (units of Bohr) for a fixed $\eta$ value of 0.5 $Bohr^-2$ when considering only a single neighbor particle. The cutoff distance is 12 Bohr (~6.3 Angstroms)." 
+  width="25%" 
+  height="25%"
+  title="Tooltip text when hovering"
+  %}
+
+The figure above shows the effect of $R_s$ on the $G_2$ symmetry function. The values of $R_s$ are selected to capture the local atomic environment at different scales. As $R_s$ increases, the emphasis is on larger pairwise distnaces thought the effect is diminished by the cutoff function.
+
+**Angular Symmetry Function ($G_4$)**
 
 The angular symmetry function captures the local atomic environment's 3-body interactions. The function is defined as:
 
 $$
-G_3^i = 2^{1 - \zeta} \sum_{j \neq i} \sum_{k \neq i,j} (1 + \lambda \cos \theta_{ijk})^\zeta e^{-\eta (r_{ij}^2 + r_{ik}^2 + r_{jk}^2)} f_c(r_{ij}) f_c(r_{ik}) f_c(r_{jk})
+G_4^i = 2^{1 - \zeta} \sum_{j \neq i} \sum_{k \neq i,j} (1 + \lambda \cos \theta_{ijk})^\zeta e^{-\eta (r_{ij}^2 + r_{ik}^2 + r_{jk}^2)} f_c(r_{ij}) f_c(r_{ik}) f_c(r_{jk})
 $$
 
 This function has a new variable, $ \theta_{ijk} $, which is the angle between the three atoms with the central atom $ i $ at the vertex.
@@ -157,6 +237,30 @@ This function has a new variable, $ \theta_{ijk} $, which is the angle between t
 The remaining new parameters are $ \zeta $ and $ \lambda $, and $ \eta $. The values of $ \zeta $ are limited to {-1, 1} and controls the importance placed on acute and obtuse angles, respectively. Similar to $G_1$, the $ \eta $ parameter controls the width of the Gaussian term.
 
 The double sum ensures that all possible combinations of neighbors are considered. The inclusion of the cutoff functions ($f_c$) ensure that if any of the pairwise distances are greater than the cutoff distance, the contribution of the 3-body term is zero.
+
+The two figure below reflect the effect of the $\lambda$ and $\zeta$ parameters on the $G_4$ symmetry function.
+
+{% include figure 
+image_path="/assets/images/nnp_post_1/angular_symmetry_functions_fig1.svg" 
+alt=" "
+caption="$G_4$ symmetry function values for different $\theta_{ijkv}$ values. The values are shown for lambda = 1 which emphasizes the importance of acute angles. $\eta = 1$ and all pair distances ($r_{ij}$, $r_{ik}$, $r_{jk}$) are set equal to each other at 0.5 Bohr to isolate the effect of the $\theta_{ijk}$ term. The cutoff distance is 12 Bohr (~6.3 Angstroms)."
+width="25%" 
+height="25%"
+title=""
+%}
+
+{% include figure 
+image_path="/assets/images/nnp_post_1/angular_symmetry_functions_fig2.svg" 
+alt=" "
+caption="$G_4$ symmetry function values for different $R_s$ values (units of Bohr) for a fixed $\eta$ value of 0.5 $Bohr^-2$ when considering only a single neighbor particle. The cutoff distance is 12 Bohr (~6.3 Angstroms)." 
+width="25%" 
+height="25%"
+title=""
+%}
+
+{: .notice--info}
+**Note:**
+I have intentionally skipped the $G_3$ symmetry function as it is not used in the Behler-Parrinello NNP that we will be constructing. There is also a $G_5$ symmetry function. More details about these functions can be found in the follwing [paper](https://doi.org/10.1063/1.3553717).
 
 ## Constructing the AEVs 
 
