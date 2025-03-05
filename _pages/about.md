@@ -20,4 +20,4 @@ In my research, I focus on using molecular dynamics simulations and data-driven 
 
 Prior to joining the University of Minnesota, I completed my undergraduate degree in Chemical Engineering at Georgia Tech and subsequently worked as a process engineer in the paper industry. 
 
-In my free time, I enjoy watching/playing sports, hiking, learning about Hindu culture, pondering about mathematics, and listening to Carnatic music. I am also working on a few coding projects which blend all of these interests with data science and machine learning, so stay tuned for updates on my [Github](https://github.com/varun-go) page!
+In my free time, I enjoy watching/playing sports, hiking, pondering about mathematics, and listening to Carnatic music. I am also working on a few coding projects which blend all of these interests with data science and machine learning, so stay tuned for updates on my [Github](https://github.com/varun-go) page!
