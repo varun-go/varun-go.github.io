@@ -10,7 +10,7 @@ toc_sticky: true
 
 # Introduction
 
-This post covers the main ideas behind **one** type of neural-network potential (NNP) in molecular simulations called the **Behler-Parrinello NNP**. I cover the basic premise behind the approach, the model architecture, how feature vectors are created, and also, apply the workflow to train a NNP for water. 
+This post covers the main ideas behind **one** type of neural-network potential (NNP) in molecular simulations called the **Behler-Parrinello NNP**. I cover the basic premise behind the approach, the model architecture and how feature vectors are created. In the next post, I will cover the construction of a NNP for water using PyTorch.
 
 While there are existing workflows that can automate the construction of NNPs, those approaches abstract away a lot from the user. Constructing our own model should help us understand what exactly is happening under the hood and could be useful for debugging and troubleshooting when using automated workflows.
 
@@ -127,8 +127,8 @@ $$
 
 where $N_{\text{O}}$ and $N_{\text{H}}$ are the number of oxygen and hydrogen atoms in the system, respectively.
 
-Pictorially, this workflow would look like this:
-
+<!-- Pictorially, this workflow would look like this:
+ -->
 
 Now, let's dive into the details of the feature vectors used to describe the local atomic environments.
 
@@ -270,7 +270,7 @@ height="25%"
 title=""
 %}
 
-Since different parameters values of the ACSFs can highlight specific areas of the local atomic environment, multiple parameters values for the same symmetry functions can be used. The AEV vector consists of the values of the ACSFs with different parameter values. For exmaple, the AEV vector for a single atom could look like this:
+Since different parameters values of the ACSFs can highlight specific areas of the local atomic environment, multiple parameters values for the same symmetry functions can be used. The AEV vector consists of the values of the ACSFs with different parameter values. For example, the AEV vector for a single atom could look like this:
 
 $$
 AEV_i =
@@ -283,14 +283,12 @@ G_4^i(\zeta_2, \lambda_2, \eta_2) \\
 \end{bmatrix}
 $$
 
+In this vector there are a set of two $G_2$ symmetry functions values and two $G_4$ symmetry functions values, but the in practice, the number of values can be much higher.
 
-## Designing Neural Networks for Potential Energy Prediction 
+# Conclusion
 
-Now, with the basics of the Behler-Parrinello NNP covered, we will not move on to constructing a NNP for water. We will use the the following paper as a reference. The dataset for this paper is available [here]().
-
-
-
+Now, that we know the basic concepts behind the Behler-Parrinello NNP and the feature vectors used to describe the local atomic environments, we are ready to construct our own NNP. The next post will cover the construction of a NNP for water using PyTorch.
 
 ## References
 1. Atom-centered symmetry functions for constructing high-dimensional
-neural network potentials (2011) THE JOURNAL OF CHEMICAL PHYSICS 134, 074106 (2011)
+neural network potentials (2011) The Journal of Chemical Physics 134, 074106 (2011)
