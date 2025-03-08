@@ -43,7 +43,7 @@ import numpy as np
 water = openmmtools.testsystems.WaterBox(model='tip3p', 
 box_edge=25*angstroms) 
 # export the structure to a pdb file
-system_file_name = 'output_mm_waters_run_01'
+system_file_name = 'output_mm_waters_nvt_run_01'
 PDBFile.writeFile(water.topology, water.positions, open(f'{system_file_name}.pdb', 'w'))
 
 # use the pdb file to create a modeller object
@@ -98,7 +98,28 @@ outfile = os.path.join(f'{system_file_name}.txt')
 dcdfile = os.path.join(f'{system_file_name}.dcd')
 checkpointfile = os.path.join(f'{system_file_name}.chk')
 
-# Create a numpy array to store the important quantites every 50 steps
+simulation.reporters.append(
+        DCDReporter(
+            dcdfile, 
+            100))
+simulation.reporters.append(
+        StateDataReporter(
+            outfile,
+            100,
+            time=True,
+            step=True,
+            potentialEnergy=True,
+            kineticEnergy=True,
+            totalEnergy=True, 
+            temperature=True,
+            volume=True,
+            density=True))
+simulation.reporters.append(
+        CheckpointReporter(
+            checkpointfile,
+            10000))
+
+# Create numpy arrays to store the important quantites every 50 steps
 forces = np.zeros((nsteps // recording_frequency, num_particles, 3))
 positions = np.zeros((nsteps // recording_frequency, num_particles, 3))
 energy = np.zeros((nsteps // recording_frequency, 1))
@@ -138,17 +159,85 @@ PDBFile.writeFile(simulation.topology, state.getPositions(), open(f'{system_file
 
 print('Finished production!')
 ```
-For clarity, I have excluded code that would write out the trajectory to file and the creation of periodic checkpoint files. The key points to note are:
+The key points to note from this script are:
 1. The water box system is generated using the `openmmtools.testsystems.WaterBox` class with default parameters. This will create a cubic box with a box edge of 25 Ångstroms (~500 water molecules).
 1. We store the forces, positions, energies, box vectors, and elements of the system. The forces and positions are at each time step are of shape `(num_particles, 3)`.
 2. We run an initial NPT equilibration run followed by an NVT production run. The configurations are stored from the NVT run. 
 
-# 
+Now that we have sampled the PES associated with the TIP3P water model, we can use this data to train a NNP.
 
+# Building the NNP potential
 
+To build the NNP, we need to create both the set of feature vectors and the neural network model. We will use the [ANI](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) methodology to do both steps. ANI uses a variation of the Behler-Parinello symmetry functions to generate the feature vectors and a neural network model to approximate the potential energy surface (see the References at the bottom of the page for more details). We will use the `torchani` [library](https://aiqm.github.io/torchani/index.html) to build the NNP which is a PyTorch implementation of the ANI potential. 
 
-# Building an ANI potential
+For this section, I will break down the code into smaller snippets to explain the implementation details.
+
+First, we load all the data from the MD simulation. We convert the units of the data to be compatible with `torchani` (e.g., Angstroms for distances and Hartree for energies). We also load the species of the atoms in the system.
+
+```python
+import numpy as np
+import tqdm 
+import math
+import torch
+from torch.utils.data import Dataset, DataLoader, random_split
+import torchani
+from torchani.units import hartree2kcalmol
+
+# load data from MM simulations
+position_file = 'positions_output_mm_waters_nvt_run_01.npy'
+forces_file = 'forces_output_mm_waters_nvt_run_01.npy'
+energy_file = 'energies_output_mm_waters_nvt_run_01.npy'
+box_vector_file = 'box_vectors_output_mm_waters_nvt_run_01.npy'
+species_file = 'elements_output_mm_waters_nvt_run_01.npy'
+
+# load the data
+positions = np.load(position_file)
+positions = torch.tensor(positions) * 10 # convert from nm to Angstrom, since torchani uses Angstrom
+
+energies = np.load(energy_file)
+energies = torch.tensor(energies)
+energies = torchani.units.kjoulemol2hartree(energies) # convert to Hartree, since torchani uses Hartree
+
+forces = np.load(forces_file)
+forces = torch.tensor(forces) / 10 # convert from 1/nm to 1/Angstrom
+forces = torchani.units.kjoulemol2hartree(forces) # convert to Hartree, H/Å
+
+box_vectors = np.load(box_vector_file)
+box_vectors = torch.tensor(box_vectors) * 10 # convert from nm to Angstrom
+species = np.load(species_file)
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+```
+
+Next, we use the `torchani` library to generate the feature vectors using the 
+AEVComputer class. The AEVComputer class is a `torch.nn.Module` that computes the atomic environment vectors (AEVs). An instance of the AEVComputer class is created with the parameters of the symmetry functions. Since the AEVComputer is a `torch.nn.Module`, it can be backpropagated through during training. This detail is important as it allows us to compute derivatives with respect to the inputs of this transformation which are the atomic positions!
+
+Below is the code snippet that creates the AEVComputer instance. Here, we use the default parameters for the symmetry functions from the TorchANI [documentation](https://aiqm.github.io/torchani/examples/nnp_training.html).
+
+```python
+# first, we set up the parameters of the symmetry functions
+Rcr = 5.2000e+00
+Rca = 3.5000e+00
+EtaR = torch.tensor([1.6000000e+01], device=device)
+ShfR = torch.tensor([9.0000000e-01, 1.1687500e+00, 1.4375000e+00, 1.7062500e+00, 1.9750000e+00, 2.2437500e+00, 2.5125000e+00, 2.7812500e+00, 3.0500000e+00, 3.3187500e+00, 3.5875000e+00, 3.8562500e+00, 4.1250000e+00, 4.3937500e+00, 4.6625000e+00, 4.9312500e+00], device=device)
+Zeta = torch.tensor([3.2000000e+01], device=device)
+ShfZ = torch.tensor([1.9634954e-01, 5.8904862e-01, 9.8174770e-01, 1.3744468e+00, 1.7671459e+00, 2.1598449e+00, 2.5525440e+00, 2.9452431e+00], device=device)
+EtaA = torch.tensor([5.0000000e+00], device=device)
+ShfA = torch.tensor([9.0000000e-01, 1.5500000e+00, 2.2000000e+00, 2.8500000e+00], device=device)
+
+species_order = ['H', 'O']
+num_species = len(species_order)
+aev_computer = torchani.AEVComputer(Rcr, Rca, EtaR, ShfR, EtaA, Zeta, ShfA, ShfZ, num_species)
+energy_shifter = torchani.utils.EnergyShifter(None)
+```
+In the code above, we also creates specify the species of the atoms in the system. This order is important as it dictates the order of the atomic neural networks which are used to compute the atomic energies. 
+
+Next, 
+
 
 # Using the ANI potential in a molecular dynamics simulation
 
 # Conclusion
+
+# References
+**ANI potential papers**
