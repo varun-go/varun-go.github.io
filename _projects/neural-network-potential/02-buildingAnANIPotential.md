@@ -10,7 +10,7 @@ toc_sticky: true
 
 # Introduction
 
-In the previous post, we covered the main idea behind the **Behler-Parrinello Neural-Network Potential (NNP)**. We saw the how the NNP can be used to approximate the potential energy surface, one scheme for generating feature vectors (e.g., the **Behler-Parinello symmetry functions**), and the parameters associated with these symmetry functions which allows one to *capture* the chemical environment of an atom/particle.
+In the previous post, we covered the main idea behind the **Behler-Parrinello Neural-Network Potential (NNP)**. We saw the how the NNP can be used to approximate the potential energy surface, one scheme for generating feature vectors (e.g., the **Behler-Parrinello symmetry functions**), and the parameters associated with these symmetry functions which allows one to *capture* the chemical environment of an atom/particle.
 
 In this post, we will cover how one may go about building an NNP with an emphasis on understanding the implementation details. Our goal is to build a NNP that can be used in a molecular dynamics simulation.
 
@@ -168,7 +168,7 @@ Now that we have sampled the PES associated with the TIP3P water model, we can u
 
 # Building the NNP potential
 
-To build the NNP, we need to create both the set of feature vectors and the neural network model. We will use the [ANI](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) methodology to do both steps. ANI uses a variation of the Behler-Parinello symmetry functions to generate the feature vectors and a neural network model to approximate the potential energy surface (see the References at the bottom of the page for more details). We will use the `torchani` [library](https://aiqm.github.io/torchani/index.html) to build the NNP which is a PyTorch implementation of the ANI potential. 
+To build the NNP, we need to create both the set of feature vectors and the neural network model. We will use the [ANI](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) methodology to do both steps. ANI uses a variation of the Behler-Parrinello symmetry functions to generate the feature vectors and a neural network model to approximate the potential energy surface (see the References at the bottom of the page for more details). We will use the `torchani` [library](https://aiqm.github.io/torchani/index.html) to build the NNP which is a PyTorch implementation of the ANI potential. 
 
 For this section, I will break down the code into smaller snippets to explain the implementation details.
 
@@ -484,7 +484,7 @@ for _ in range(AdamW_scheduler.last_epoch + 1, max_epochs):
 ```
 Two key points to note from the training loop are:
 1. The forward pass of the model uses two keyword arguments `pbc` and `cell` to account for periodic boundary conditions. 
-2. Two loss functions are shown in the code snippet. The first loss function includes both the energy loss and the force loss. The second loss function only includes the energy loss. The force loss is computed using the `torch.autograd.grad` function which computes the gradient of the predicted energies with respect to the atomic positions -- which is easily done since the AEVComputer is a `torch.nn.Module`.
+2. Two loss functions are shown in the code snippet. The first loss function includes both the energy loss and the force loss. The second loss function only includes the energy loss. The force loss is computed using the `torch.autograd.grad` function which computes the gradient of the predicted energies with respect to the atomic positions -- which is easily done since the AEVComputer is a `torch.nn.Module`. In theory, one could also incorporate the virial tensor in the loss function; this approach is taken in the Deep Potential NNP [approach](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.143001).
 
 Great! We have setup a NNP using the ANI methodology. The trained model can be used to predict the potential energy of unseen data and can be used in a molecular dynamics simulation.
 
