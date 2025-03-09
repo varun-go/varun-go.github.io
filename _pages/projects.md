@@ -17,5 +17,10 @@ A series of posts explaining neural-network potentials.
 {% endfor %}
 
 ## Graph-Based Neural Networks for Predicting Molecular Properties
-A series of posts explaining how to build a graph-based neural network potential.
-[View Series](/projects/graph-based-neural-network-potential/)
+A series of posts explaining on the use of graph neural networks for molecular property prediction. 
+
+<!-- {% for project in site.projects %}
+{% if project.url contains "/projects/graph-based-neural-network-potential/" %}
+- [{{ project.title }}]({{ project.url }})
+{% endif %}
+{% endfor %} -->
