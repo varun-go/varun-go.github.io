@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Neural-Network Potentials - Part 1" 
+title: "Behler-Parrinello Neural-Network Potentials and Atomic Environment Descriptors" 
 permalink: /projects/neural-network-potential/part-1/
 classes: wide
 use_math: true

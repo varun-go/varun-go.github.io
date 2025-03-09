@@ -235,7 +235,6 @@ In the code above, we also creates specify the species of the atoms in the syste
 Next, we create training and validation datasets using the `torch.utils.data.Dataset` class. This class can store the data in a format that can be used by the `torch.utils.data.DataLoader` class, which can load the data in batches during training. 
 
 ```python
-
 class ANI_Dataset(Dataset):
     def __init__(self,
                  positions: torch.Tensor,
@@ -487,10 +486,9 @@ Two key points to note from the training loop are:
 1. The forward pass of the model uses two keyword arguments `pbc` and `cell` to account for periodic boundary conditions. 
 2. Two loss functions are shown in the code snippet. The first loss function includes both the energy loss and the force loss. The second loss function only includes the energy loss. The force loss is computed using the `torch.autograd.grad` function which computes the gradient of the predicted energies with respect to the atomic positions -- which is easily done since the AEVComputer is a `torch.nn.Module`.
 
-And that's it! We have setup a NNP using the ANI methodology. The trained model can be used to predict the potential energy of unseen data and can be used in a molecular dynamics simulation.
+Great! We have setup a NNP using the ANI methodology. The trained model can be used to predict the potential energy of unseen data and can be used in a molecular dynamics simulation.
 
 # Using the ANI potential in a molecular dynamics simulation
-
 As stated previously, OpenMM is a powerful library and one aspect that adds this power is the availability of plugins on top of the core library. One such plugin is the [OpenMM-Torch](https://github.com/openmm/openmm-torch) plugin which allows for the integration of PyTorch neural networks with OpenMM. We show how this plugin can be used to integrate the ANI potential with OpenMM. This workflow is based on an [example](https://github.com/openmm/openmm-torch/blob/master/tutorials/openmm-torch-nnpops.ipynb) for using the pre-trained ANI-2x model in OpenMM.
 
 ```python
