@@ -168,7 +168,7 @@ Now that we have sampled the PES associated with the TIP3P water model, we can u
 
 # Building the NNP potential
 
-To build the NNP, we need to create both the set of feature vectors and the neural network model. We will use the [ANI](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) methodology to do both steps. ANI uses a variation of the Behler-Parrinello symmetry functions to generate the feature vectors and a neural network model to approximate the potential energy surface (see the References at the bottom of the page for more details). We will use the `torchani` [library](https://aiqm.github.io/torchani/index.html) to build the NNP which is a PyTorch implementation of the ANI potential. 
+To build the NNP, we need to create both the set of feature vectors and the neural network model. We will use the [ANI](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) methodology to do both steps. ANI uses a variation of the Behler-Parrinello symmetry functions to generate the feature vectors and a neural network model to approximate the potential energy surface (see equation 4 in the ANI [paper](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) for more detials). We will use the `torchani` [library](https://aiqm.github.io/torchani/index.html) to build the NNP which is a PyTorch implementation of the ANI potential. 
 
 For this section, I will break down the code into smaller snippets to explain the implementation details.
 
@@ -326,7 +326,7 @@ def init_params(m):
 
 atomic_neural_nets.apply(init_params)
 ```
-The order of the atomic neural networks should match the order of the species in the system. The architecture of the atomic neural networks can be optimized using hyperparameter tuning, but the default ANI architecture is a good starting point.
+The order of the atomic neural networks should match the order of the species in the system. The architecture of the atomic neural networks can be optimized, but the default ANI architecture is a good starting point.
 
 Now, we can combine the AEVComputer with the atomic neural networks to create the neural network model. The model will take as input the atomic positions and species and output the total energy of the system.
 
@@ -656,6 +656,6 @@ It should be noted that the the ANI model can be optimized using the `NNPOps` [p
 
 That's it! In this post, we went through the worfklow for how to train a Behler-Parrinello style NNP for use in MD simulations. We used PyTorch and the `torchani` library to build the NNP, using the awesome functionality of making the featurization part of the model using the `torch.nn.Module` class. We created an example script for training the model and lastly, we showed how one can use a PyTorch-based NNP in an OpenMM simulation using the `OpenMM-Torch` plugin.
 
-It should be noted that in practice, the training of the NNP would be done using high-quality data and there would likely be many steps to optimize the architecture of the atomic NNPs and the model hyperparameters of the model. 
+It should be noted that in practice, the training of the NNP would be done using high-quality data and there would likely be many steps to optimize both the architecture of the atomic NNPs and the hyperparameters of the model. 
 
-Creating this post was a great learning experience for me since utilizing a pre-trained NNP is different from training a NNP from scratch. I hope this post can help others who are interested in using NNPs in their MD simulations.
+Creating this post was a great learning experience for me since utilizing a pre-trained NNP is different from training a NNP from scratch. I hope this post can help others who are interested in using NNPs in their MD simulations. If you have any questions or would like to chat about NNPs, feel free to reach out to me! 
