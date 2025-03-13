@@ -168,7 +168,7 @@ Now that we have sampled the PES associated with the TIP3P water model, we can u
 
 # Building the NNP potential
 
-To build the NNP, we need to create both the set of feature vectors and the neural network model. We will use the [ANI](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) methodology to do both steps. ANI uses a variation of the Behler-Parrinello symmetry functions to generate the feature vectors and a neural network model to approximate the potential energy surface (see equation 4 in the ANI [paper](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) for more detials). We will use the `torchani` [library](https://aiqm.github.io/torchani/index.html) to build the NNP which is a PyTorch implementation of the ANI potential. 
+To build the NNP, we need to create both the set of feature vectors and the neural network model. We will use the [ANI](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) methodology to do both steps. ANI uses a variation of the Behler-Parrinello symmetry functions to generate the feature vectors and a neural network model to approximate the potential energy surface (see equation 4 in the ANI [paper](http://pubs.rsc.org/en/Content/ArticleLanding/2017/SC/C6SC05720A#!divAbstract) for more details). We will use the `torchani` [library](https://aiqm.github.io/torchani/index.html) to build the NNP which is a PyTorch implementation of the ANI potential. 
 
 For this section, I will break down the code into smaller snippets to explain the implementation details.
 
@@ -243,15 +243,7 @@ class ANI_Dataset(Dataset):
                  box_vectors: torch.Tensor,
                  species: torch.Tensor,
                  device='cpu'):
-        '''
-        Args:    
-            positions: torch.Tensor, shape (n_frames, n_atoms, 3)
-            energies: torch.Tensor, shape (n_frames, 1)
-            forces: torch.Tensor, shape (n_frames, n_atoms, 3)
-            box_vectors: torch.Tensor, shape (n_frames, 3, 3)
-            species: torch.Tensor, shape (n_frames, n_atoms)
-            device: str, 'cpu' or 'cuda'
-        '''
+        ''' Dataset class for the ANI model '''
         self.device = device
         self.coordinates = positions
         self.energies = energies
