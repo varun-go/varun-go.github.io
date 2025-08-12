@@ -8,7 +8,9 @@ toc: false
 
 ## Journal Articles
 
-1. Paruchuri, B. C., **Gopal, V.**, Sarupria, S., & Larsen, J. (2021). Toward Enzyme-Responsive Polymersome Drug Delivery. *Nanomedicine*, **16**(30), 2679–2693. [https://doi.org/10.2217/nnm-2021-0194](https://doi.org/10.2217/nnm-2021-0194)
+1. *Paruchuri, B. C., ***Gopal, V.**, Sarupria, S., & Larsen, J. (2021). Toward Enzyme-Responsive Polymersome Drug Delivery. *Nanomedicine*, **16**(30), 2679–2693. [https://doi.org/10.2217/nnm-2021-0194](https://doi.org/10.2217/nnm-2021-0194)
+
+    \*Co-first authors
 
 ## Preprints
 
