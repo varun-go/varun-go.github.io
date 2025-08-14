@@ -14,10 +14,7 @@ toc: false
 
 ## Preprints
 
-1. **Gopal, V.**, Kirkvold, C., Gordon, A., & Goodpaster, J. D. (2025).  
-Solvent-Inclusive Machine Learning/Molecular Mechanics Simulations. *ChemRxiv*.  
-[Link pending ChemRxiv approval]
-<!-- [https://doi.org/10.26434/chemrxiv-2025-xxxxx](https://doi.org/10.26434/chemrxiv-2025-xxxxx)   -->
+1. **Gopal V**, Kirkvold C, Gordon A, Goodpaster J, Sarupria S. Solvent-Inclusive ML/MM Simulations: Assessments of Structural, Dynamical, and Thermodynamic Accuracy. ChemRxiv. 2025; doi:[10.26434/chemrxiv-2025-dlr6c](https://doi.org/10.26434/chemrxiv-2025-dlr6c)  
 
 *Associated code available at:* [GitHub Repository](https://github.com/SAMPEL-Group/solvent-inclusive-mlmm/)
 
