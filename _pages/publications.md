@@ -1,7 +1,8 @@
 ---
 title: "Publications"
-permalink: /publications/
 layout: single
+permalink: /publications/
+classes: wide
 author_profile: true
 toc: false
 ---
