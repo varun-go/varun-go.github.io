@@ -7,18 +7,20 @@ author_profile: true
 toc: false
 ---
 
-## Journal Articles
-
-2. **Gopal, V.**, Kirkvold, C., Gordon, A., Goodpaster, J., Sarupria, S. Solvent-Inclusive ML/MM Simulations: Assessments of Structural, Dynamical, and Thermodynamic Accuracy. JCIM (*accepted*). 2025; doi:[10.26434/chemrxiv-2025-dlr6c](https://doi.org/10.26434/chemrxiv-2025-dlr6c)  
-
-*Associated code available at:* [GitHub Repository](https://github.com/SAMPEL-Group/solvent-inclusive-mlmm/)
-
-1. \*Paruchuri, B. C., **\*Gopal, V.**, Sarupria, S., & Larsen, J. (2021). Toward Enzyme-Responsive Polymersome Drug Delivery. *Nanomedicine*, **16**(30), 2679–2693. [https://doi.org/10.2217/nnm-2021-0194](https://doi.org/10.2217/nnm-2021-0194)
-
-    \*Co-first authors
-
-
-
-
-
-
+<ol reversed>
+  <li>
+    <strong>Gopal, V.</strong>, Kirkvold, C., Gordon, A., Goodpaster, J., Sarupria, S.  
+    Solvent-Inclusive ML/MM Simulations: Assessments of Structural, Dynamical, and Thermodynamic Accuracy.  
+    <em>Journal of Chemical Information and Modeling</em> (JCIM, accepted). 2025.  
+    doi: <a href="https://doi.org/10.26434/chemrxiv-2025-dlr6c">10.26434/chemrxiv-2025-dlr6c</a><br>
+    <em>Associated code available at:</em>
+    <a href="https://github.com/SAMPEL-Group/solvent-inclusive-mlmm/">GitHub Repository</a>
+  </li>
+  <li>
+    Paruchuri, B. C.<sup>*</sup>, <strong>Gopal, V.</strong><sup>*</sup>, Sarupria, S., &amp; Larsen, J. (2021).  
+    Toward Enzyme-Responsive Polymersome Drug Delivery.
+    <em>Nanomedicine</em>, <strong>16</strong>(30), 2679–2693.  
+    <a href="https://doi.org/10.2217/nnm-2021-0194">https://doi.org/10.2217/nnm-2021-0194</a><br>
+    <sup>*</sup>Co-first authors
+  </li>
+</ol>
