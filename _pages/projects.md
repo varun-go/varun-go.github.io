@@ -1,5 +1,5 @@
 ---
-title: "Projects"
+title: "Posts"
 layout: single
 permalink: /projects/
 classes: wide
@@ -24,3 +24,8 @@ A series of posts explaining on the use of graph neural networks for molecular p
 - [{{ project.title }}]({{ project.url }})
 {% endif %}
 {% endfor %} -->
+
+## Probabilistic Machine Learning for Molecular Simulations
+
+{% for project in site.projects %}
+{% if project.url contains "/projects/probabilistic-machine-learning/" %}
