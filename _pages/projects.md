@@ -1,5 +1,5 @@
 ---
-title: "Posts"
+title: "Projects"
 layout: single
 permalink: /projects/
 classes: wide
