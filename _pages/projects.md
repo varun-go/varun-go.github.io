@@ -17,15 +17,20 @@ A series of posts explaining neural-network potentials.
 {% endfor %}
 
 ## Graph-Based Neural Networks for Predicting Molecular Properties
-A series of posts explaining on the use of graph neural networks for molecular property prediction. 
+A series of posts explaining on the use of graph neural networks for molecular property prediction.
 
-<!-- {% for project in site.projects %}
+{% comment %}
+{% for project in site.projects %}
 {% if project.url contains "/projects/graph-based-neural-network-potential/" %}
 - [{{ project.title }}]({{ project.url }})
 {% endif %}
-{% endfor %} -->
+{% endfor %}
+{% endcomment %}
 
 ## Probabilistic Machine Learning for Molecular Simulations
 
 {% for project in site.projects %}
 {% if project.url contains "/projects/probabilistic-machine-learning/" %}
+- [{{ project.title }}]({{ project.url }})
+{% endif %}
+{% endfor %}
