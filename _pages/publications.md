@@ -11,8 +11,8 @@ toc: false
   <li>
     <strong>Gopal, V.</strong>, Kirkvold, C., Gordon, A., Goodpaster, J., Sarupria, S.  
     Solvent-Inclusive ML/MM Simulations: Assessments of Structural, Dynamical, and Thermodynamic Accuracy.  
-    <em>Journal of Chemical Information and Modeling</em> (accepted). 2025.  
-    doi: <a href="https://doi.org/10.26434/chemrxiv-2025-dlr6c">10.26434/chemrxiv-2025-dlr6c</a><br>
+    <em>Journal of Chemical Information and Modeling</em> (JCIM). 2025.
+    doi: <a href="https://doi.org/10.1021/acs.jcim.5c01939">10.1021/acs.jcim.5c01939</a><br>
     <em>Associated code available at:</em>
     <a href="https://github.com/SAMPEL-Group/solvent-inclusive-mlmm/">GitHub Repository</a>
   </li>
